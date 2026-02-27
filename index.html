@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AppLinkQR — One QR Code for Both App Stores</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--ink:#0d0d0d;--paper:#f5f2eb;--lime:#c8f53a;--lime-dark:#a8d020;--muted:#6b6960;--border:#d5d0c5;--white:#ffffff}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Cabinet Grotesk',sans-serif;overflow-x:hidden}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--border);background:var(--paper);position:sticky;top:0;z-index:100}
+.nav-logo{font-size:20px;font-weight:900;letter-spacing:-.04em;display:flex;align-items:center;gap:8px}
+.nav-logo span{background:var(--ink);color:var(--lime);padding:2px 8px;border-radius:6px}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-badge{background:var(--lime);color:var(--ink);font-size:11px;font-weight:800;padding:3px 10px;border-radius:100px;letter-spacing:.05em;text-transform:uppercase}
+
+.lang-switcher{display:flex;align-items:center;background:var(--white);border:1px solid var(--border);border-radius:100px;padding:3px;gap:2px}
+.lang-btn{border:none;background:none;font-family:'Cabinet Grotesk',sans-serif;font-size:12px;font-weight:800;padding:5px 14px;border-radius:100px;cursor:pointer;color:var(--muted);transition:all .2s;letter-spacing:.03em}
+.lang-btn.active{background:var(--ink);color:var(--lime)}
+.lang-btn:hover:not(.active){color:var(--ink)}
+.visit-counter{display:flex;align-items:center;gap:7px;background:var(--ink);color:var(--lime);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:800;white-space:nowrap}
+.visit-counter .vc-dot{width:6px;height:6px;background:var(--lime);border-radius:50%;box-shadow:0 0 0 3px rgba(200,245,58,.25);animation:pulse 2s infinite;flex-shrink:0}
+.visit-counter .vc-num{font-family:'Instrument Mono',monospace;font-size:12px}
+
+.hero{padding:80px 40px 60px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+@media(max-width:768px){nav{padding:16px 20px}.hero{grid-template-columns:1fr;padding:40px 20px;gap:40px}.features-grid{grid-template-columns:1fr 1fr!important}.main-tool{padding:32px 20px!important}.nav-badge{display:none}}
+
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:100px;padding:5px 14px 5px 8px;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:24px;background:var(--white)}
+.hero-eyebrow::before{content:'';width:8px;height:8px;background:var(--lime);border-radius:50%;box-shadow:0 0 0 3px rgba(200,245,58,.3);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(200,245,58,.3)}50%{box-shadow:0 0 0 6px rgba(200,245,58,.1)}}
+
+h1{font-size:clamp(42px,5vw,64px);font-weight:900;line-height:1;letter-spacing:-.04em;margin-bottom:20px}
+h1 em{font-style:normal;background:var(--lime);padding:0 6px;border-radius:4px}
+.hero-desc{font-size:17px;line-height:1.6;color:var(--muted);margin-bottom:32px;font-weight:500}
+.hero-stats{display:flex;gap:28px}
+.stat{display:flex;flex-direction:column}
+.stat-num{font-size:28px;font-weight:900;letter-spacing:-.04em;line-height:1}
+.stat-label{font-size:12px;color:var(--muted);font-weight:500;margin-top:2px}
+
+.hero-visual{background:var(--ink);border-radius:24px;padding:32px;display:flex;flex-direction:column;align-items:center;gap:20px;position:relative;overflow:hidden}
+.hero-visual::before{content:'';position:absolute;top:-30%;right:-20%;width:200px;height:200px;background:var(--lime);border-radius:50%;opacity:.08;pointer-events:none}
+.hero-visual-qr{background:white;padding:14px;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.hero-visual-qr canvas,.hero-visual-qr img{width:140px;height:140px;display:block}
+.hero-visual-label{color:#aaa;font-size:12px;font-family:'Instrument Mono',monospace;letter-spacing:.05em}
+.hero-visual-arrows{display:flex;gap:12px;width:100%}
+.hero-arrow-card{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px}
+.arrow-emoji{font-size:22px}
+.arrow-store{font-size:12px;font-weight:700;color:white}
+.arrow-detect{font-size:10px;color:var(--lime);font-family:'Instrument Mono',monospace}
+
+.main-tool{background:var(--ink);padding:64px 40px}
+.tool-inner{max-width:720px;margin:0 auto}
+.section-tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:4px;margin-bottom:16px}
+.tool-inner h2{font-size:36px;font-weight:900;letter-spacing:-.04em;color:white;margin-bottom:8px}
+.tool-subtitle{color:#888;font-size:15px;margin-bottom:40px}
+
+.form-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:28px;margin-bottom:16px}
+.form-card-header{display:flex;align-items:center;gap:12px;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid #2a2a2a}
+.form-card-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.icon-app{background:rgba(200,245,58,.15)}.icon-ios{background:rgba(255,255,255,.1)}.icon-android{background:rgba(61,220,132,.15)}
+.form-card-title{font-size:15px;font-weight:700;color:white}
+.form-card-desc{font-size:12px;color:#666;margin-top:1px}
+.field-group{margin-bottom:16px}.field-group:last-child{margin-bottom:0}
+label{display:block;font-size:12px;font-weight:700;color:#777;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.field-input{width:100%;background:#111;border:1px solid #333;border-radius:10px;padding:13px 16px;color:white;font-size:14px;font-family:'Instrument Mono',monospace;outline:none;transition:border-color .2s}
+.field-input:focus{border-color:var(--lime)}.field-input::placeholder{color:#444}
+
+.generate-btn{width:100%;background:var(--lime);color:var(--ink);border:none;border-radius:12px;padding:18px;font-size:16px;font-weight:900;font-family:'Cabinet Grotesk',sans-serif;cursor:pointer;letter-spacing:-.02em;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px}
+.generate-btn:hover{background:var(--lime-dark);transform:translateY(-2px);box-shadow:0 8px 32px rgba(200,245,58,.3)}
+.generate-btn:active{transform:translateY(0)}
+
+#result-section{display:none;margin-top:24px;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.result-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:28px}
+.result-top{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start;margin-bottom:24px}
+@media(max-width:500px){.result-top{grid-template-columns:1fr}}
+.qr-output{background:white;padding:14px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.6)}
+.qr-output canvas,.qr-output img{display:block;border-radius:4px}
+#qr-app-name{font-size:10px;font-weight:800;color:#111;letter-spacing:.08em;text-transform:uppercase;font-family:'Cabinet Grotesk',sans-serif}
+.result-info h3{font-size:22px;font-weight:900;color:white;margin-bottom:6px;letter-spacing:-.03em}
+.result-note{font-size:13px;color:#666;margin-bottom:16px;line-height:1.5}
+.detected-urls{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.det-url{display:flex;align-items:center;gap:10px;background:#111;border:1px solid #2a2a2a;border-radius:9px;padding:10px 14px}
+.det-url .icon{font-size:18px;flex-shrink:0}
+.det-url .store-name{font-size:12px;font-weight:700;color:white;white-space:nowrap}
+.det-url .store-url{font-size:11px;color:#555;font-family:'Instrument Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.btn-dl-qr{display:inline-flex;align-items:center;gap:7px;padding:11px 20px;border-radius:9px;font-size:13px;font-weight:700;font-family:'Cabinet Grotesk',sans-serif;cursor:pointer;border:none;transition:all .2s;background:var(--lime);color:var(--ink)}
+.btn-dl-qr:hover{background:var(--lime-dark)}
+
+.features-section{padding:80px 40px;max-width:1100px;margin:0 auto}
+.features-section h2{font-size:42px;font-weight:900;letter-spacing:-.04em;margin-bottom:8px}
+.features-section .sub{font-size:16px;color:var(--muted);margin-bottom:40px}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:600px){.features-grid{grid-template-columns:1fr}}
+.feature-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;transition:transform .2s,box-shadow .2s}
+.feature-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.08)}
+.feature-icon{font-size:28px;margin-bottom:14px;display:block}
+.feature-title{font-size:16px;font-weight:800;margin-bottom:6px;letter-spacing:-.02em}
+.feature-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:12px}
+footer strong{color:var(--ink)}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:var(--lime);font-size:13px;font-weight:700;padding:12px 20px;border-radius:10px;z-index:1000;transform:translateY(80px);opacity:0;transition:all .3s;font-family:'Cabinet Grotesk',sans-serif}
+.toast.show{transform:translateY(0);opacity:1}
+</style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DHH903HPCP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DHH903HPCP');
+</script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span>App</span>LinkQR</div>
+  <div class="nav-right">
+    <div class="nav-badge" data-i18n="badge">100% Free · No Signup</div>
+    <div class="visit-counter"><div class="vc-dot"></div><span id="vc-num">...</span>&nbsp;<span data-i18n="visits">visits</span></div>
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('sr')">SR</button>
+    </div>
+  </div>
+</nav>
+
+<section>
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow" data-i18n="eyebrow">Smart QR Code Generator</div>
+      <h1 data-i18n="h1">One QR.<br><em>Both</em> stores.<br>Instant.</h1>
+      <p class="hero-desc" data-i18n="desc">Stop paying $20/month for a simple QR code. Generate a smart QR that automatically detects iPhone vs Android and sends users to the right store — completely free, no setup needed.</p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">$0</span><span class="stat-label" data-i18n="stat1">Cost forever</span></div>
+        <div class="stat"><span class="stat-num" data-i18n="stat2num">5 sec</span><span class="stat-label" data-i18n="stat2">To generate</span></div>
+        <div class="stat"><span class="stat-num">∞</span><span class="stat-label" data-i18n="stat3">QR scans</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-visual-label" data-i18n="vis1">YOUR QR CODE</div>
+      <div class="hero-visual-qr" id="demo-qr"></div>
+      <div class="hero-visual-label" data-i18n="vis2">SCAN DETECTS DEVICE ↓</div>
+      <div class="hero-visual-arrows">
+        <div class="hero-arrow-card">
+          <span class="arrow-emoji">🍎</span>
+          <div><div class="arrow-store">App Store</div><div class="arrow-detect" data-i18n="ios-detect">iPhone detected</div></div>
+        </div>
+        <div class="hero-arrow-card">
+          <span class="arrow-emoji">🤖</span>
+          <div><div class="arrow-store">Google Play</div><div class="arrow-detect" data-i18n="and-detect">Android detected</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="main-tool" id="generator">
+  <div class="tool-inner">
+    <div class="section-tag">Generator</div>
+    <h2 data-i18n="gen-title">Generate Your QR Code</h2>
+    <p class="tool-subtitle" data-i18n="gen-sub">Enter your app store URLs — your users get a QR that just works.</p>
+
+    <div class="form-card">
+      <div class="form-card-header">
+        <div class="form-card-icon icon-app">✦</div>
+        <div><div class="form-card-title" data-i18n="card1-title">App Info</div><div class="form-card-desc" data-i18n="card1-desc">Basic information about your app</div></div>
+      </div>
+      <div class="field-group">
+        <label data-i18n="label-name">App Name</label>
+        <input type="text" class="field-input" id="app-name" data-i18n-ph="ph-name" placeholder="e.g. My Awesome App">
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-header">
+        <div class="form-card-icon icon-ios">🍎</div>
+        <div><div class="form-card-title">Apple App Store URL</div><div class="form-card-desc" data-i18n="card2-desc">From apps.apple.com</div></div>
+      </div>
+      <div class="field-group" style="margin:0">
+        <label>App Store URL</label>
+        <input type="url" class="field-input" id="ios-url" placeholder="https://apps.apple.com/app/id123456789">
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-header">
+        <div class="form-card-icon icon-android">🤖</div>
+        <div><div class="form-card-title">Google Play Store URL</div><div class="form-card-desc" data-i18n="card3-desc">From play.google.com</div></div>
+      </div>
+      <div class="field-group" style="margin:0">
+        <label>Play Store URL</label>
+        <input type="url" class="field-input" id="android-url" placeholder="https://play.google.com/store/apps/details?id=com.your.app">
+      </div>
+    </div>
+
+    <button class="generate-btn" onclick="generate()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span data-i18n="gen-btn">Generate Smart QR Code</span>
+    </button>
+
+    <div id="result-section">
+      <div class="result-card">
+        <div class="result-top">
+          <div class="qr-output">
+            <div id="qrcode"></div>
+            <div id="qr-app-name">APP QR</div>
+          </div>
+          <div class="result-info">
+            <h3 id="result-title">—</h3>
+            <p class="result-note" data-i18n="result-note">When someone scans this QR → they land on the redirect page → device is detected → they go to the correct store. Zero friction.</p>
+            <div class="detected-urls">
+              <div class="det-url"><span class="icon">🍎</span><span class="store-name">iOS →</span><span class="store-url" id="show-ios-url">—</span></div>
+              <div class="det-url"><span class="icon">🤖</span><span class="store-name">Android →</span><span class="store-url" id="show-android-url">—</span></div>
+            </div>
+            <button class="btn-dl-qr" onclick="downloadQR()"><span data-i18n="dl-btn">⬇ Download QR PNG</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features-section">
+  <div class="section-tag" data-i18n="why-tag">Why AppLinkQR</div>
+  <h2 data-i18n="why-title">Everything you need.<br>Nothing you don't.</h2>
+  <p class="sub" data-i18n="why-sub">Built for people who are tired of overpaying for simple tools.</p>
+  <div class="features-grid">
+    <div class="feature-card"><span class="feature-icon">🎯</span><div class="feature-title" data-i18n="f1t">Smart Device Detection</div><div class="feature-desc" data-i18n="f1d">One QR code automatically routes iPhone users to App Store and Android users to Google Play. Always the right link.</div></div>
+    <div class="feature-card"><span class="feature-icon">💸</span><div class="feature-title" data-i18n="f2t">Completely Free</div><div class="feature-desc" data-i18n="f2d">No subscriptions, no limits, no tricks. Generate unlimited QR codes. No account needed.</div></div>
+    <div class="feature-card"><span class="feature-icon">⚡</span><div class="feature-title" data-i18n="f3t">Instant Generation</div><div class="feature-desc" data-i18n="f3d">Fill in two URLs, get a QR in seconds. Download as PNG, ready to print on anything.</div></div>
+    <div class="feature-card"><span class="feature-icon">🔒</span><div class="feature-title" data-i18n="f4t">No Account Required</div><div class="feature-desc" data-i18n="f4d">We don't store your data, we don't track you, we don't ask for your email. Ever.</div></div>
+    <div class="feature-card"><span class="feature-icon">📱</span><div class="feature-title" data-i18n="f5t">Works Everywhere</div><div class="feature-desc" data-i18n="f5d">Print on packaging, business cards, posters. Works with any QR scanner on any phone worldwide.</div></div>
+    <div class="feature-card"><span class="feature-icon">🌍</span><div class="feature-title" data-i18n="f6t">Zero Setup for Users</div><div class="feature-desc" data-i18n="f6d">Enter URLs, get QR, done. No technical knowledge, no configuration needed from users.</div></div>
+  </div>
+</section>
+
+<footer>
+  <div><strong>AppLinkQR</strong> — <span data-i18n="ft1">Free smart QR for app developers</span></div>
+  <div data-i18n="ft2">No tracking · No ads · Just a useful tool</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const REDIRECT_BASE = window.location.origin;
+let currentAppName = '';
+let lang = 'en';
+
+const T = {
+  en: {
+    badge:'100% Free · No Signup', eyebrow:'Smart QR Code Generator',
+    h1:'One QR.<br><em>Both</em> stores.<br>Instant.',
+    desc:'Stop paying $20/month for a simple QR code. Generate a smart QR that automatically detects iPhone vs Android and sends users to the right store — completely free, no setup needed.',
+    stat1:'Cost forever', 'stat2num':'5 sec', stat2:'To generate', stat3:'QR scans',
+    vis1:'YOUR QR CODE', vis2:'SCAN DETECTS DEVICE ↓',
+    'ios-detect':'iPhone detected', 'and-detect':'Android detected',
+    'gen-title':'Generate Your QR Code',
+    'gen-sub':'Enter your app store URLs — your users get a QR that just works.',
+    'card1-title':'App Info', 'card1-desc':'Basic information about your app',
+    'label-name':'App Name', 'ph-name':'e.g. My Awesome App',
+    'card2-desc':'From apps.apple.com', 'card3-desc':'From play.google.com',
+    'gen-btn':'Generate Smart QR Code',
+    'result-note':'When someone scans this QR → they land on the redirect page → device is detected → they go to the correct store. Zero friction.',
+    'dl-btn':'⬇ Download QR PNG',
+    'why-tag':'Why AppLinkQR', 'why-title':'Everything you need.<br>Nothing you don\'t.',
+    'why-sub':'Built for people who are tired of overpaying for simple tools.',
+    f1t:'Smart Device Detection', f1d:'One QR code automatically routes iPhone users to App Store and Android users to Google Play. Always the right link.',
+    f2t:'Completely Free', f2d:'No subscriptions, no limits, no tricks. Generate unlimited QR codes. No account needed.',
+    f3t:'Instant Generation', f3d:'Fill in two URLs, get a QR in seconds. Download as PNG, ready to print on anything.',
+    f4t:'No Account Required', f4d:"We don't store your data, we don't track you, we don't ask for your email. Ever.",
+    f5t:'Works Everywhere', f5d:'Print on packaging, business cards, posters. Works with any QR scanner on any phone worldwide.',
+    f6t:'Zero Setup for Users', f6d:'Enter URLs, get QR, done. No technical knowledge, no configuration needed from users.',
+    ft1:'Free smart QR for app developers', ft2:'No tracking · No ads · Just a useful tool',
+    'visits':'visits', 'qr-suffix':' — QR Ready ✓', 'err-url':'⚠ Enter at least one URL',
+    'err-qr':'⚠ Generate a QR first!', 'ok-dl':'✓ QR downloaded!',
+  },
+  sr: {
+    badge:'100% Besplatno · Bez Registracije', eyebrow:'Pametni QR Generator za Aplikacije',
+    h1:'Jedan QR.<br><em>Oba</em> storea.<br>Odmah.',
+    desc:'Prestani da plaćaš $20 mesečno za jednostavan QR kod. Generiši pametni QR koji automatski detektuje iPhone ili Android i šalje korisnika na pravi store — potpuno besplatno, bez ikakve konfiguracije.',
+    stat1:'Zauvek besplatno', 'stat2num':'5 sek', stat2:'Do generisanja', stat3:'Skeniranja QR-a',
+    vis1:'TVOJ QR KOD', vis2:'SKENIRANJE DETEKTUJE UREĐAJ ↓',
+    'ios-detect':'iPhone detektovan', 'and-detect':'Android detektovan',
+    'gen-title':'Generiši svoj QR Kod',
+    'gen-sub':'Unesi URL-ove app storeova — korisnici dobijaju QR koji jednostavno radi.',
+    'card1-title':'Podaci o aplikaciji', 'card1-desc':'Osnovne informacije o tvojoj aplikaciji',
+    'label-name':'Naziv aplikacije', 'ph-name':'npr. Moja Aplikacija',
+    'card2-desc':'Sa apps.apple.com', 'card3-desc':'Sa play.google.com',
+    'gen-btn':'Generiši Pametni QR Kod',
+    'result-note':'Kad neko skenira QR → dolazi na redirect stranicu → detektuje se uređaj → otvara se pravi store. Bez trenja.',
+    'dl-btn':'⬇ Preuzmi QR PNG',
+    'why-tag':'Zašto AppLinkQR', 'why-title':'Sve što trebaš.<br>Ništa što ne trebaš.',
+    'why-sub':'Napravljeno za ljude koji su umorni od preskupih jednostavnih alata.',
+    f1t:'Pametna Detekcija Uređaja', f1d:'Jedan QR kod automatski šalje korisnike iPhonea na App Store, a Android korisnike na Google Play. Uvek pravi link.',
+    f2t:'Potpuno Besplatno', f2d:'Bez pretplate, bez limita, bez trikova. Generišite neograničen broj QR kodova. Bez naloga.',
+    f3t:'Trenutno Generisanje', f3d:'Unesite dva URL-a, dobijte QR za sekunde. Preuzmite kao PNG, spreman za štampu na bilo čemu.',
+    f4t:'Bez Naloga', f4d:'Ne čuvamo vaše podatke, ne pratimo vas, ne tražimo email. Nikada.',
+    f5t:'Radi Svuda', f5d:'Štampajte na ambalaži, vizit kartama, posterima. Radi sa svakim QR skenerom na svakom telefonu.',
+    f6t:'Nula Podešavanja', f6d:'Unesite URL-ove, dobijte QR, gotovo. Bez tehničkog znanja, bez konfiguracije od strane korisnika.',
+    ft1:'Besplatni pametni QR za programere aplikacija', ft2:'Bez praćenja · Bez reklama · Samo koristan alat',
+    'visits':'poseta', 'qr-suffix':' — QR Spreman ✓', 'err-url':'⚠ Unesi bar jedan URL',
+    'err-qr':'⚠ Prvo generiši QR!', 'ok-dl':'✓ QR preuzet!',
+  }
+};
+
+function tr(k){ return T[lang][k] || T.en[k] || k; }
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === l.toUpperCase()));
+  document.querySelectorAll('[data-i18n]').forEach(el => el.innerHTML = tr(el.dataset.i18n));
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => el.placeholder = tr(el.dataset.i18nPh));
+  document.title = l === 'sr' ? 'AppLinkQR — Jedan QR kod za oba App Storea' : 'AppLinkQR — One QR Code for Both App Stores';
+}
+
+window.addEventListener('load', () => {
+  // Visit counter using free CountAPI
+  fetch('https://api.counterapi.dev/v1/applinkqr/visits/up')
+    .then(r => r.json())
+    .then(d => {
+      const n = d.count || 0;
+      document.getElementById('vc-num').textContent = n.toLocaleString();
+    })
+    .catch(() => { document.getElementById('vc-num').textContent = '—'; });
+
+  new QRCode(document.getElementById('demo-qr'), {
+    text: REDIRECT_BASE, width: 140, height: 140,
+    colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M
+  });
+});
+
+function generate() {
+  const name    = document.getElementById('app-name').value.trim();
+  const ios     = document.getElementById('ios-url').value.trim();
+  const android = document.getElementById('android-url').value.trim();
+  if (!ios && !android) { showToast(tr('err-url')); return; }
+  currentAppName = name || 'My App';
+
+  const params = new URLSearchParams();
+  if (ios)     params.set('ios', ios);
+  if (android) params.set('android', android);
+  if (name)    params.set('n', name);
+
+  const qrDiv = document.getElementById('qrcode');
+  qrDiv.innerHTML = '';
+  new QRCode(qrDiv, {
+    text: `${REDIRECT_BASE}/r?${params.toString()}`,
+    width: 180, height: 180, colorDark: '#000', colorLight: '#fff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  document.getElementById('qr-app-name').textContent     = currentAppName.toUpperCase();
+  document.getElementById('result-title').textContent    = currentAppName + tr('qr-suffix');
+  document.getElementById('show-ios-url').textContent    = ios || '—';
+  document.getElementById('show-android-url').textContent = android || '—';
+
+  const rs = document.getElementById('result-section');
+  rs.style.display = 'block';
+  setTimeout(() => rs.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+}
+
+function downloadQR() {
+  const canvas = document.querySelector('#qrcode canvas');
+  if (!canvas) { showToast(tr('err-qr')); return; }
+  const out = document.createElement('canvas');
+  const pad = 24;
+  out.width = canvas.width + pad*2; out.height = canvas.height + pad*2 + 32;
+  const ctx = out.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,out.width,out.height);
+  ctx.drawImage(canvas, pad, pad);
+  ctx.fillStyle = '#111'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText(currentAppName.toUpperCase(), out.width/2, out.height-8);
+  const a = document.createElement('a');
+  a.download = `${currentAppName.replace(/\s+/g,'_')}_QR.png`;
+  a.href = out.toDataURL('image/png'); a.click();
+  showToast(tr('ok-dl'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
