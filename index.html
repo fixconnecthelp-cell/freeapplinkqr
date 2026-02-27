@@ -248,7 +248,7 @@ footer strong{color:var(--ink)}
 <div class="toast" id="toast"></div>
 
 <script>
-const REDIRECT_BASE = window.location.origin;
+const REDIRECT_BASE = (window.location.origin + window.location.pathname).replace(/\/[^\/]*$/, '');
 let currentAppName = '';
 let lang = 'en';
 
