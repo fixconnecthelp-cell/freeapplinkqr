@@ -260,7 +260,6 @@ footer strong{color:var(--ink)}
   </div>
 </section>
 
-
 <footer>
   <div><strong>AppLinkQR</strong> — <span data-i18n="ft1">Free smart QR for app developers</span></div>
   <div data-i18n="ft2">No tracking · No ads · Just a useful tool</div>
@@ -271,7 +270,7 @@ footer strong{color:var(--ink)}
 <!-- GDPR Consent Banner -->
 <div class="consent-overlay" id="consent-banner">
   <div class="consent-text">
-    <strong id="consent-title">🍪 We use cookies</strong><br>
+    <strong>🍪 Koristimo kolačiće / We use cookies</strong><br>
     <span data-i18n="consent-text">We use Google Analytics to understand how visitors use our site. No personal data is sold or shared. You can decline and the site will work normally.</span>
   </div>
   <div class="consent-btns">
@@ -312,7 +311,6 @@ const T = {
     f6t:'Zero Setup for Users', f6d:'Enter URLs, get QR, done. No technical knowledge, no configuration needed from users.',
     ft1:'Free smart QR for app developers', ft2:'No tracking · No ads · Just a useful tool',
     'visits':'visits',
-    'consent-title':'🍪 We use cookies',
     'consent-text':"We use Google Analytics to understand how visitors use our site. No personal data is sold or shared. You can decline and the site will work normally.",
     'consent-accept':'Accept Analytics',
     'consent-decline':'Decline', 'qr-suffix':' — QR Ready ✓', 'err-url':'⚠ Enter at least one URL',
@@ -343,7 +341,6 @@ const T = {
     f6t:'Nula Podešavanja', f6d:'Unesite URL-ove, dobijte QR, gotovo. Bez tehničkog znanja, bez konfiguracije od strane korisnika.',
     ft1:'Besplatni pametni QR za programere aplikacija', ft2:'Bez praćenja · Bez reklama · Samo koristan alat',
     'visits':'poseta',
-    'consent-title':'🍪 Koristimo kolačiće',
     'consent-text':'Koristimo Google Analytics da razumemo kako posetioci koriste naš sajt. Nikakvi lični podaci se ne prodaju niti dele. Možete odbiti i sajt će raditi normalno.',
     'consent-accept':'Prihvati Analytics',
     'consent-decline':'Odbij', 'qr-suffix':' — QR Spreman ✓', 'err-url':'⚠ Unesi bar jedan URL',
@@ -357,7 +354,6 @@ function setLang(l) {
   lang = l;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === l.toUpperCase()));
   document.querySelectorAll('[data-i18n]').forEach(el => el.innerHTML = tr(el.dataset.i18n));
-  var ct = document.getElementById('consent-title'); if(ct) ct.textContent = tr('consent-title');
   document.querySelectorAll('[data-i18n-ph]').forEach(el => el.placeholder = tr(el.dataset.i18nPh));
   document.title = l === 'sr' ? 'AppLinkQR — Jedan QR kod za oba App Storea' : 'AppLinkQR — One QR Code for Both App Stores';
 }
@@ -382,22 +378,12 @@ window.addEventListener('load', () => {
     loadGA();
   }
 
-  // Load QR generated count
-  fetch('https://api.countapi.xyz/get/fixconnecthelp-cell.github.io/qr-generated')
+  // Visit counter using free CountAPI
+  fetch('https://api.counterapi.dev/v1/applinkqr/visits/up')
     .then(r => r.json())
     .then(d => {
-      const n = d.value || 0;
-    }).catch(() => {
-    });
-
-  // Visit counter using countapi.xyz (reliable free service)
-  fetch('https://api.countapi.xyz/hit/fixconnecthelp-cell.github.io/visits')
-    .then(r => r.json())
-    .then(d => {
-      const n = d.value || 0;
+      const n = d.count || 0;
       document.getElementById('vc-num').textContent = n.toLocaleString();
-      var vf = document.getElementById('visit-count-footer');
-      if (vf) vf.textContent = n.toLocaleString();
     })
     .catch(() => { document.getElementById('vc-num').textContent = '—'; });
 
@@ -435,18 +421,6 @@ function generate() {
   const rs = document.getElementById('result-section');
   rs.style.display = 'block';
   setTimeout(() => rs.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
-
-  // Track QR generation in Google Analytics
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'qr_generated', { app_name: currentAppName });
-  }
-
-  // Increment QR counter
-  fetch('https://api.countapi.xyz/hit/freeapplinkqr.netlify.app/qr-generated')
-    .then(r => r.json())
-    .then(d => {
-      const n = d.value || 0;
-    }).catch(() => {});
 }
 
 function downloadQR() {
