@@ -104,16 +104,36 @@ label{display:block;font-size:12px;font-weight:700;color:#777;letter-spacing:.06
 
 footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:12px}
 footer strong{color:var(--ink)}
+
+/* ─── GDPR CONSENT BANNER ─── */
+.consent-overlay{position:fixed;bottom:0;left:0;right:0;z-index:9999;padding:16px 24px;background:var(--ink);border-top:2px solid var(--lime);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.consent-overlay.show{transform:translateY(0)}
+.consent-text{font-size:13px;color:#aaa;line-height:1.6;flex:1;min-width:200px}
+.consent-text strong{color:white}
+.consent-text a{color:var(--lime);text-decoration:none}
+.consent-btns{display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap}
+.consent-btn{padding:10px 20px;border-radius:9px;font-size:13px;font-weight:800;font-family:'Cabinet Grotesk',sans-serif;cursor:pointer;border:none;transition:all .2s;letter-spacing:-.01em}
+.consent-accept{background:var(--lime);color:var(--ink)}
+.consent-accept:hover{background:var(--lime-dark)}
+.consent-decline{background:#2a2a2a;color:#aaa;border:1px solid #3a3a3a}
+.consent-decline:hover{background:#333;color:white}
+
 .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:var(--lime);font-size:13px;font-weight:700;padding:12px 20px;border-radius:10px;z-index:1000;transform:translateY(80px);opacity:0;transition:all .3s;font-family:'Cabinet Grotesk',sans-serif}
 .toast.show{transform:translateY(0);opacity:1}
 </style>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DHH903HPCP"></script>
+<!-- Google Analytics (consent-gated) -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-DHH903HPCP');
+  // GA loads only after user accepts
+  function loadGA() {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-DHH903HPCP';
+    document.head.appendChild(s);
+    s.onload = function(){ gtag('config', 'G-DHH903HPCP'); };
+  }
 </script>
 </head>
 <body>
@@ -135,7 +155,7 @@ footer strong{color:var(--ink)}
     <div class="hero-left">
       <div class="hero-eyebrow" data-i18n="eyebrow">Smart QR Code Generator</div>
       <h1 data-i18n="h1">One QR.<br><em>Both</em> stores.<br>Instant.</h1>
-      <p class="hero-desc" data-i18n="desc">Stop paying for a simple QR code. Generate a smart QR that automatically detects iPhone vs Android and sends users to the right store — completely free, no setup needed.</p>
+      <p class="hero-desc" data-i18n="desc">Stop paying $20/month for a simple QR code. Generate a smart QR that automatically detects iPhone vs Android and sends users to the right store — completely free, no setup needed.</p>
       <div class="hero-stats">
         <div class="stat"><span class="stat-num">$0</span><span class="stat-label" data-i18n="stat1">Cost forever</span></div>
         <div class="stat"><span class="stat-num" data-i18n="stat2num">5 sec</span><span class="stat-label" data-i18n="stat2">To generate</span></div>
@@ -240,6 +260,22 @@ footer strong{color:var(--ink)}
   </div>
 </section>
 
+<section style="background:var(--ink);padding:48px 40px;text-align:center">
+  <div style="max-width:700px;margin:0 auto">
+    <div style="display:flex;justify-content:center;gap:48px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:48px;font-weight:900;color:var(--lime);letter-spacing:-.04em;font-family:'Cabinet Grotesk',sans-serif" id="qr-count-1">...</div>
+        <div style="font-size:13px;color:#666;margin-top:4px;font-family:'Cabinet Grotesk',sans-serif" data-i18n="stat-qr">QR codes generated</div>
+      </div>
+      <div>
+        <div style="font-size:48px;font-weight:900;color:var(--lime);letter-spacing:-.04em;font-family:'Cabinet Grotesk',sans-serif" id="visit-count-footer">...</div>
+        <div style="font-size:13px;color:#666;margin-top:4px;font-family:'Cabinet Grotesk',sans-serif" data-i18n="stat-visits">people helped</div>
+      </div>
+    </div>
+    <p style="color:#444;font-size:13px;margin-top:24px;font-family:'Cabinet Grotesk',sans-serif" data-i18n="stat-sub">Real numbers. Updated live.</p>
+  </div>
+</section>
+
 <footer>
   <div><strong>AppLinkQR</strong> — <span data-i18n="ft1">Free smart QR for app developers</span></div>
   <div data-i18n="ft2">No tracking · No ads · Just a useful tool</div>
@@ -247,8 +283,21 @@ footer strong{color:var(--ink)}
 
 <div class="toast" id="toast"></div>
 
+<!-- GDPR Consent Banner -->
+<div class="consent-overlay" id="consent-banner">
+  <div class="consent-text">
+    <strong id="consent-title">🍪 We use cookies</strong><br>
+    <span data-i18n="consent-text">We use Google Analytics to understand how visitors use our site. No personal data is sold or shared. You can decline and the site will work normally.</span>
+  </div>
+  <div class="consent-btns">
+    <button class="consent-btn consent-decline" onclick="declineConsent()" data-i18n="consent-decline">Decline</button>
+    <button class="consent-btn consent-accept" onclick="acceptConsent()" data-i18n="consent-accept">Accept Analytics</button>
+  </div>
+</div>
+
+
 <script>
-const REDIRECT_BASE = (window.location.origin + window.location.pathname).replace(/\/[^\/]*$/, '');
+const REDIRECT_BASE = window.location.origin;
 let currentAppName = '';
 let lang = 'en';
 
@@ -256,7 +305,7 @@ const T = {
   en: {
     badge:'100% Free · No Signup', eyebrow:'Smart QR Code Generator',
     h1:'One QR.<br><em>Both</em> stores.<br>Instant.',
-    desc:'Stop paying for a simple QR code. Generate a smart QR that automatically detects iPhone vs Android and sends users to the right store — completely free, no setup needed.',
+    desc:'Stop paying $20/month for a simple QR code. Generate a smart QR that automatically detects iPhone vs Android and sends users to the right store — completely free, no setup needed.',
     stat1:'Cost forever', 'stat2num':'5 sec', stat2:'To generate', stat3:'QR scans',
     vis1:'YOUR QR CODE', vis2:'SCAN DETECTS DEVICE ↓',
     'ios-detect':'iPhone detected', 'and-detect':'Android detected',
@@ -277,7 +326,14 @@ const T = {
     f5t:'Works Everywhere', f5d:'Print on packaging, business cards, posters. Works with any QR scanner on any phone worldwide.',
     f6t:'Zero Setup for Users', f6d:'Enter URLs, get QR, done. No technical knowledge, no configuration needed from users.',
     ft1:'Free smart QR for app developers', ft2:'No tracking · No ads · Just a useful tool',
-    'visits':'visits', 'qr-suffix':' — QR Ready ✓', 'err-url':'⚠ Enter at least one URL',
+    'visits':'visits',
+    'stat-qr':'QR codes generated',
+    'stat-visits':'people helped',
+    'stat-sub':'Real numbers. Updated live.',
+    'consent-title':'🍪 We use cookies',
+    'consent-text':"We use Google Analytics to understand how visitors use our site. No personal data is sold or shared. You can decline and the site will work normally.",
+    'consent-accept':'Accept Analytics',
+    'consent-decline':'Decline', 'qr-suffix':' — QR Ready ✓', 'err-url':'⚠ Enter at least one URL',
     'err-qr':'⚠ Generate a QR first!', 'ok-dl':'✓ QR downloaded!',
   },
   sr: {
@@ -304,7 +360,14 @@ const T = {
     f5t:'Radi Svuda', f5d:'Štampajte na ambalaži, vizit kartama, posterima. Radi sa svakim QR skenerom na svakom telefonu.',
     f6t:'Nula Podešavanja', f6d:'Unesite URL-ove, dobijte QR, gotovo. Bez tehničkog znanja, bez konfiguracije od strane korisnika.',
     ft1:'Besplatni pametni QR za programere aplikacija', ft2:'Bez praćenja · Bez reklama · Samo koristan alat',
-    'visits':'poseta', 'qr-suffix':' — QR Spreman ✓', 'err-url':'⚠ Unesi bar jedan URL',
+    'visits':'poseta',
+    'stat-qr':'generisanih QR kodova',
+    'stat-visits':'ljudi pronašlo pomoć',
+    'stat-sub':'Pravi brojevi. Ažuriraju se uživo.',
+    'consent-title':'🍪 Koristimo kolačiće',
+    'consent-text':'Koristimo Google Analytics da razumemo kako posetioci koriste naš sajt. Nikakvi lični podaci se ne prodaju niti dele. Možete odbiti i sajt će raditi normalno.',
+    'consent-accept':'Prihvati Analytics',
+    'consent-decline':'Odbij', 'qr-suffix':' — QR Spreman ✓', 'err-url':'⚠ Unesi bar jedan URL',
     'err-qr':'⚠ Prvo generiši QR!', 'ok-dl':'✓ QR preuzet!',
   }
 };
@@ -315,17 +378,55 @@ function setLang(l) {
   lang = l;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === l.toUpperCase()));
   document.querySelectorAll('[data-i18n]').forEach(el => el.innerHTML = tr(el.dataset.i18n));
+  var ct = document.getElementById('consent-title'); if(ct) ct.textContent = tr('consent-title');
   document.querySelectorAll('[data-i18n-ph]').forEach(el => el.placeholder = tr(el.dataset.i18nPh));
   document.title = l === 'sr' ? 'AppLinkQR — Jedan QR kod za oba App Storea' : 'AppLinkQR — One QR Code for Both App Stores';
 }
 
+// ─── CONSENT LOGIC ──────────────────────────────────────
+function acceptConsent() {
+  localStorage.setItem('cookie_consent', 'accepted');
+  document.getElementById('consent-banner').classList.remove('show');
+  loadGA();
+}
+function declineConsent() {
+  localStorage.setItem('cookie_consent', 'declined');
+  document.getElementById('consent-banner').classList.remove('show');
+}
+
 window.addEventListener('load', () => {
-  // Visit counter using free CountAPI
-  fetch('https://api.counterapi.dev/v1/applinkqr/visits/up')
+  // Show banner if no choice made yet
+  var consent = localStorage.getItem('cookie_consent');
+  if (!consent) {
+    setTimeout(() => document.getElementById('consent-banner').classList.add('show'), 800);
+  } else if (consent === 'accepted') {
+    loadGA();
+  }
+
+  // Load QR generated count
+  fetch('https://api.countapi.xyz/get/freeapplinkqr.netlify.app/qr-generated')
     .then(r => r.json())
     .then(d => {
-      const n = d.count || 0;
+      const n = d.value || 0;
+      ['qr-count-1','qr-count-2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = n.toLocaleString();
+      });
+    }).catch(() => {
+      ['qr-count-1','qr-count-2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '0';
+      });
+    });
+
+  // Visit counter using countapi.xyz (reliable free service)
+  fetch('https://api.countapi.xyz/hit/freeapplinkqr.netlify.app/visits')
+    .then(r => r.json())
+    .then(d => {
+      const n = d.value || 0;
       document.getElementById('vc-num').textContent = n.toLocaleString();
+      var vf = document.getElementById('visit-count-footer');
+      if (vf) vf.textContent = n.toLocaleString();
     })
     .catch(() => { document.getElementById('vc-num').textContent = '—'; });
 
@@ -342,6 +443,15 @@ function generate() {
   if (!ios && !android) { showToast(tr('err-url')); return; }
   currentAppName = name || 'My App';
 
+  // Track QR generation in Google Analytics
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'qr_generated', {
+      'app_name': currentAppName,
+      'has_ios': !!ios,
+      'has_android': !!android
+    });
+  }
+
   const params = new URLSearchParams();
   if (ios)     params.set('ios', ios);
   if (android) params.set('android', android);
@@ -350,7 +460,7 @@ function generate() {
   const qrDiv = document.getElementById('qrcode');
   qrDiv.innerHTML = '';
   new QRCode(qrDiv, {
-    text: `${REDIRECT_BASE}/r.html?${params.toString()}`,
+    text: `${REDIRECT_BASE}/r?${params.toString()}`,
     width: 180, height: 180, colorDark: '#000', colorLight: '#fff',
     correctLevel: QRCode.CorrectLevel.M
   });
@@ -363,6 +473,22 @@ function generate() {
   const rs = document.getElementById('result-section');
   rs.style.display = 'block';
   setTimeout(() => rs.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+
+  // Track QR generation in Google Analytics
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'qr_generated', { app_name: currentAppName });
+  }
+
+  // Increment QR counter
+  fetch('https://api.countapi.xyz/hit/freeapplinkqr.netlify.app/qr-generated')
+    .then(r => r.json())
+    .then(d => {
+      const n = d.value || 0;
+      ['qr-count-1','qr-count-2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = n.toLocaleString();
+      });
+    }).catch(() => {});
 }
 
 function downloadQR() {
