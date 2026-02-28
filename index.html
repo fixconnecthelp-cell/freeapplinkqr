@@ -281,7 +281,8 @@ footer strong{color:var(--ink)}
 
 
 <script>
-const REDIRECT_BASE = window.location.origin;
+const PROJECT = window.location.pathname.split('/')[1] || '';
+const REDIRECT_BASE = window.location.origin + (PROJECT ? `/${PROJECT}` : '');
 let currentAppName = '';
 let lang = 'en';
 
@@ -408,7 +409,7 @@ function generate() {
   const qrDiv = document.getElementById('qrcode');
   qrDiv.innerHTML = '';
   new QRCode(qrDiv, {
-    text: `${REDIRECT_BASE}/r?${params.toString()}`,
+    text: `${REDIRECT_BASE}/r/?${params.toString()}`,
     width: 180, height: 180, colorDark: '#000', colorLight: '#fff',
     correctLevel: QRCode.CorrectLevel.M
   });
