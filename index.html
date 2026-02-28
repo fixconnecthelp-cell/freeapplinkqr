@@ -409,7 +409,7 @@ function generate() {
   const qrDiv = document.getElementById('qrcode');
   qrDiv.innerHTML = '';
   new QRCode(qrDiv, {
-    text: `${REDIRECT_BASE}/r/?${params.toString()}`,
+    text: `${REDIRECT_BASE}/r.html?${params.toString()}`,
     width: 180, height: 180, colorDark: '#000', colorLight: '#fff',
     correctLevel: QRCode.CorrectLevel.M
   });
