@@ -404,31 +404,45 @@ window.addEventListener('load', () => {
   }
 
   // Load QR generated count
+  console.log('[QR Counter] Fetching QR count...');
   fetch('https://api.countapi.xyz/get/freeapplinkqr.netlify.app/qr-generated')
-    .then(r => r.json())
+    .then(r => {
+      console.log('[QR Counter] Response status:', r.status, r.ok);
+      return r.json();
+    })
     .then(d => {
+      console.log('[QR Counter] Data received:', d);
       const n = d.value || 0;
       ['qr-count-1','qr-count-2'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = n.toLocaleString();
       });
-    }).catch(() => {
+    }).catch(err => {
+      console.error('[QR Counter] FAILED:', err);
       ['qr-count-1','qr-count-2'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = '0';
       });
     });
 
-  // Visit counter using countapi.xyz (reliable free service)
+  // Visit counter
+  console.log('[Counter] Fetching visit count...');
   fetch('https://api.countapi.xyz/hit/freeapplinkqr.netlify.app/visits')
-    .then(r => r.json())
+    .then(r => {
+      console.log('[Counter] Response status:', r.status, r.ok);
+      return r.json();
+    })
     .then(d => {
+      console.log('[Counter] Data received:', d);
       const n = d.value || 0;
       document.getElementById('vc-num').textContent = n.toLocaleString();
       var vf = document.getElementById('visit-count-footer');
       if (vf) vf.textContent = n.toLocaleString();
     })
-    .catch(() => { document.getElementById('vc-num').textContent = '—'; });
+    .catch(err => { 
+      console.error('[Counter] FAILED:', err);
+      document.getElementById('vc-num').textContent = '—'; 
+    });
 
   new QRCode(document.getElementById('demo-qr'), {
     text: REDIRECT_BASE, width: 140, height: 140,
@@ -442,15 +456,6 @@ function generate() {
   const android = document.getElementById('android-url').value.trim();
   if (!ios && !android) { showToast(tr('err-url')); return; }
   currentAppName = name || 'My App';
-
-  // Track QR generation in Google Analytics
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'qr_generated', {
-      'app_name': currentAppName,
-      'has_ios': !!ios,
-      'has_android': !!android
-    });
-  }
 
   const params = new URLSearchParams();
   if (ios)     params.set('ios', ios);
