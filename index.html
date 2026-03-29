@@ -59,11 +59,31 @@ h1 em{font-style:normal;background:var(--lime);padding:0 6px;border-radius:4px}
 .arrow-store{font-size:12px;font-weight:700;color:white}
 .arrow-detect{font-size:10px;color:var(--lime);font-family:'Instrument Mono',monospace}
 
-.main-tool{background:var(--ink);padding:64px 40px}
-.tool-inner{max-width:720px;margin:0 auto}
-.section-tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:4px;margin-bottom:16px}
-.tool-inner h2{font-size:36px;font-weight:900;letter-spacing:-.04em;color:white;margin-bottom:8px}
-.tool-subtitle{color:#888;font-size:15px;margin-bottom:40px}
+.main-tool{background:var(--ink);padding:56px 40px}
+@media(max-width:768px){.main-tool{padding:36px 20px}}
+.tool-layout{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:start}
+@media(max-width:900px){.tool-layout{grid-template-columns:1fr}}
+.section-tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:4px;margin-bottom:14px}
+.settings-heading{font-size:26px;font-weight:900;letter-spacing:-.04em;color:white;margin-bottom:4px}
+.settings-sub{color:#666;font-size:13px;margin-bottom:20px}
+
+/* ─── LIVE PREVIEW COLUMN ─── */
+.preview-col{position:sticky;top:88px}
+@media(max-width:900px){.preview-col{position:static}}
+.preview-panel{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.preview-label{font-size:10px;font-weight:800;color:#444;letter-spacing:.12em;text-transform:uppercase;font-family:'Instrument Mono',monospace;align-self:flex-start}
+.preview-qr-wrap{border-radius:14px;box-shadow:0 12px 48px rgba(0,0,0,.6);overflow:hidden;display:flex;align-items:center;justify-content:center;transition:background .3s}
+.preview-qr-wrap canvas{display:block}
+.preview-appname{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-family:'Cabinet Grotesk',sans-serif;color:#555;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.preview-stores{display:flex;flex-direction:column;gap:5px;width:100%}
+.preview-store-row{display:flex;align-items:center;gap:7px;background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:7px 10px}
+.preview-store-icon{font-size:13px;flex-shrink:0}
+.preview-store-url{font-size:10px;color:#444;font-family:'Instrument Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.preview-store-url.has-url{color:#888}
+.preview-empty-hint{font-size:11px;color:#444;text-align:center;line-height:1.6;padding:4px 0}
+.btn-dl-preview{width:100%;background:var(--lime);color:var(--ink);border:none;border-radius:10px;padding:13px;font-size:13px;font-weight:900;font-family:'Cabinet Grotesk',sans-serif;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;letter-spacing:-.01em}
+.btn-dl-preview:hover{background:var(--lime-dark);transform:translateY(-1px)}
+.btn-dl-preview:disabled{background:#1e1e1e;color:#444;cursor:not-allowed;transform:none}
 
 .form-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:28px;margin-bottom:16px}
 .form-card-header{display:flex;align-items:center;gap:12px;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid #2a2a2a}
@@ -264,164 +284,170 @@ footer strong{color:var(--ink)}
 </section>
 
 <section class="main-tool" id="generator">
-  <div class="tool-inner">
-    <div class="section-tag">Generator</div>
-    <h2 data-i18n="gen-title">Generate Your QR Code</h2>
-    <p class="tool-subtitle" data-i18n="gen-sub">Enter your app store URLs — your users get a QR that just works.</p>
+  <div class="tool-layout">
 
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon icon-app">✦</div>
-        <div><div class="form-card-title" data-i18n="card1-title">App Info</div><div class="form-card-desc" data-i18n="card1-desc">Basic information about your app</div></div>
-      </div>
-      <div class="field-group">
-        <label data-i18n="label-name">App Name</label>
-        <input type="text" class="field-input" id="app-name" data-i18n-ph="ph-name" placeholder="e.g. My Awesome App">
-      </div>
-    </div>
+    <!-- LEFT: Live Preview -->
+    <div class="preview-col">
+      <div class="preview-panel">
+        <div class="preview-label" data-i18n="preview-label">Live Preview</div>
 
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon icon-ios">🍎</div>
-        <div><div class="form-card-title">Apple App Store URL</div><div class="form-card-desc" data-i18n="card2-desc">From apps.apple.com</div></div>
-      </div>
-      <div class="field-group" style="margin:0">
-        <label>App Store URL</label>
-        <input type="url" class="field-input" id="ios-url" placeholder="https://apps.apple.com/app/id123456789">
-      </div>
-    </div>
-
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon icon-android">🤖</div>
-        <div><div class="form-card-title">Google Play Store URL</div><div class="form-card-desc" data-i18n="card3-desc">From play.google.com</div></div>
-      </div>
-      <div class="field-group" style="margin:0">
-        <label>Play Store URL</label>
-        <input type="url" class="field-input" id="android-url" placeholder="https://play.google.com/store/apps/details?id=com.your.app">
-      </div>
-    </div>
-
-    <!-- QR Style Picker -->
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon icon-style">◈</div>
-        <div><div class="form-card-title" data-i18n="card-style-title">QR Style</div><div class="form-card-desc" data-i18n="card-style-desc">Choose the look of your QR code</div></div>
-      </div>
-      <div class="style-picker">
-        <button class="style-btn sd-classic active" data-style="classic" onclick="selectStyle(this)">
-          <div class="sdots"><i></i><i></i><i></i><i></i></div>
-          <span class="style-btn-label" data-i18n="style-classic">Classic</span>
-        </button>
-        <button class="style-btn sd-dots" data-style="dots" onclick="selectStyle(this)">
-          <div class="sdots"><i></i><i></i><i></i><i></i></div>
-          <span class="style-btn-label" data-i18n="style-dots">Dots</span>
-        </button>
-        <button class="style-btn sd-rounded" data-style="rounded" onclick="selectStyle(this)">
-          <div class="sdots"><i></i><i></i><i></i><i></i></div>
-          <span class="style-btn-label" data-i18n="style-rounded">Rounded</span>
-        </button>
-        <button class="style-btn sd-classy" data-style="classy" onclick="selectStyle(this)">
-          <div class="sdots"><i></i><i></i><i></i><i></i></div>
-          <span class="style-btn-label" data-i18n="style-classy">Classy</span>
-        </button>
-        <button class="style-btn sd-lime" data-style="lime" onclick="selectStyle(this)">
-          <div class="sdots"><i></i><i></i><i></i><i></i></div>
-          <span class="style-btn-label" data-i18n="style-lime">Lime</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Color Picker -->
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon icon-color">⬡</div>
-        <div><div class="form-card-title" data-i18n="card-color-title">Colors</div><div class="form-card-desc" data-i18n="card-color-desc">QR code and background color</div></div>
-      </div>
-      <div class="color-row">
-        <div class="color-field">
-          <label data-i18n="color-qr-label">QR Color</label>
-          <div class="color-input-wrap">
-            <div class="color-swatch" id="qr-swatch" style="background:#000000">
-              <input type="color" id="qr-color" value="#000000" oninput="onColorInput('qr',this.value)">
+        <!-- App Info card styled with QR colors -->
+        <div id="app-info-card" style="width:100%;border-radius:12px;padding:12px 14px;background:#111;border:1px solid #2a2a2a;transition:background .3s,border-color .3s">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div id="app-info-logo" style="width:36px;height:36px;border-radius:8px;background:#222;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;transition:background .3s">✦</div>
+            <div>
+              <div id="app-info-name" style="font-size:14px;font-weight:800;color:white;letter-spacing:-.02em">—</div>
+              <div style="font-size:10px;color:#555;font-family:'Instrument Mono',monospace;margin-top:1px" data-i18n="preview-app-sub">App Name</div>
             </div>
-            <input class="color-hex" id="qr-hex" maxlength="7" value="#000000" oninput="onHexInput('qr',this.value)" spellcheck="false">
-          </div>
-          <div class="color-presets">
-            <div class="cp active" style="background:#000000" onclick="setColor('qr','#000000',this)"></div>
-            <div class="cp" style="background:#0d0d0d" onclick="setColor('qr','#0d0d0d',this)"></div>
-            <div class="cp" style="background:#1a1a2e" onclick="setColor('qr','#1a1a2e',this)"></div>
-            <div class="cp" style="background:#c8f53a" onclick="setColor('qr','#c8f53a',this)"></div>
-            <div class="cp" style="background:#3dd4ac" onclick="setColor('qr','#3dd4ac',this)"></div>
-            <div class="cp" style="background:#6c63ff" onclick="setColor('qr','#6c63ff',this)"></div>
-            <div class="cp" style="background:#ff6b6b" onclick="setColor('qr','#ff6b6b',this)"></div>
-            <div class="cp" style="background:#f7931e" onclick="setColor('qr','#f7931e',this)"></div>
           </div>
         </div>
-        <div class="color-field">
-          <label data-i18n="color-bg-label">Background</label>
-          <div class="color-input-wrap">
-            <div class="color-swatch" id="bg-swatch" style="background:#ffffff">
-              <input type="color" id="bg-color" value="#ffffff" oninput="onColorInput('bg',this.value)">
-            </div>
-            <input class="color-hex" id="bg-hex" maxlength="7" value="#ffffff" oninput="onHexInput('bg',this.value)" spellcheck="false">
+
+        <div class="preview-qr-wrap" id="preview-qr-wrap" style="background:#ffffff">
+          <div id="preview-qr"></div>
+        </div>
+        <div class="preview-appname" id="preview-appname">—</div>
+
+        <div class="preview-stores">
+          <div class="preview-store-row">
+            <span class="preview-store-icon">🍎</span>
+            <span class="preview-store-url" id="prev-ios" data-i18n="prev-no-url">No iOS URL yet</span>
           </div>
-          <div class="color-presets">
-            <div class="cp active" style="background:#ffffff;border:1px solid #333" onclick="setColor('bg','#ffffff',this)"></div>
-            <div class="cp" style="background:#f5f2eb;border:1px solid #333" onclick="setColor('bg','#f5f2eb',this)"></div>
-            <div class="cp" style="background:#0d0d0d" onclick="setColor('bg','#0d0d0d',this)"></div>
-            <div class="cp" style="background:#1a1a2e" onclick="setColor('bg','#1a1a2e',this)"></div>
-            <div class="cp" style="background:#c8f53a" onclick="setColor('bg','#c8f53a',this)"></div>
-            <div class="cp" style="background:#3dd4ac" onclick="setColor('bg','#3dd4ac',this)"></div>
-            <div class="cp" style="background:#6c63ff" onclick="setColor('bg','#6c63ff',this)"></div>
-            <div class="cp" style="background:#f7931e" onclick="setColor('bg','#f7931e',this)"></div>
+          <div class="preview-store-row">
+            <span class="preview-store-icon">🤖</span>
+            <span class="preview-store-url" id="prev-android" data-i18n="prev-no-url">No Android URL yet</span>
           </div>
         </div>
+
+        <button class="btn-dl-preview" id="dl-btn" onclick="downloadQR()" disabled>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span data-i18n="dl-btn">⬇ Download QR PNG</span>
+        </button>
       </div>
     </div>
 
-    <!-- Logo Upload -->
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon icon-logo">⊕</div>
-        <div><div class="form-card-title" data-i18n="card-logo-title">App Icon (optional)</div><div class="form-card-desc" data-i18n="card-logo-desc">Shown in the center of the QR code</div></div>
-      </div>
-      <div class="logo-upload-area" id="logo-drop-area">
-        <input type="file" id="logo-input" accept="image/*" onchange="handleLogoUpload(event)">
-        <span class="logo-upload-icon">🖼</span>
-        <div class="logo-upload-hint"><strong data-i18n="logo-hint-strong">Upload your app icon</strong><span data-i18n="logo-hint-sub">PNG, JPG, SVG — max 2MB</span></div>
-      </div>
-      <div class="logo-preview-row" id="logo-preview-row" style="display:none">
-        <img class="logo-thumb" id="logo-thumb" src="" alt="logo">
-        <span class="logo-preview-name" id="logo-preview-name"></span>
-        <button class="logo-clear-btn" onclick="clearLogo()" data-i18n="logo-remove">Remove</button>
-      </div>
-    </div>
+    <!-- RIGHT: Settings -->
+    <div class="settings-col">
+      <div class="section-tag">Generator</div>
+      <div class="settings-heading" data-i18n="gen-title">Generate Your QR Code</div>
+      <div class="settings-sub" data-i18n="gen-sub">Enter your app store URLs — your users get a QR that just works.</div>
 
-    <button class="generate-btn" onclick="generate()">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      <span data-i18n="gen-btn">Generate Smart QR Code</span>
-    </button>
+      <!-- App Info -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <div class="form-card-icon icon-app">✦</div>
+          <div><div class="form-card-title" data-i18n="card1-title">App Info</div><div class="form-card-desc" data-i18n="card1-desc">Basic information about your app</div></div>
+        </div>
+        <div class="field-group">
+          <label data-i18n="label-name">App Name</label>
+          <input type="text" class="field-input" id="app-name" data-i18n-ph="ph-name" placeholder="e.g. My Awesome App" oninput="liveUpdate()">
+        </div>
+        <div class="field-group">
+          <label>App Store URL</label>
+          <input type="url" class="field-input" id="ios-url" placeholder="https://apps.apple.com/app/id123456789" oninput="liveUpdate()">
+        </div>
+        <div class="field-group" style="margin:0">
+          <label>Play Store URL</label>
+          <input type="url" class="field-input" id="android-url" placeholder="https://play.google.com/store/apps/details?id=com.your.app" oninput="liveUpdate()">
+        </div>
+      </div>
 
-    <div id="result-section">
-      <div class="result-card">
-        <div class="result-top">
-          <div class="qr-output">
-            <div id="qrcode"></div>
-            <div id="qr-app-name">APP QR</div>
-          </div>
-          <div class="result-info">
-            <h3 id="result-title">—</h3>
-            <p class="result-note" data-i18n="result-note">When someone scans this QR → they land on the redirect page → device is detected → they go to the correct store. Zero friction.</p>
-            <div class="detected-urls">
-              <div class="det-url"><span class="icon">🍎</span><span class="store-name">iOS →</span><span class="store-url" id="show-ios-url">—</span></div>
-              <div class="det-url"><span class="icon">🤖</span><span class="store-name">Android →</span><span class="store-url" id="show-android-url">—</span></div>
+      <!-- QR Style Picker -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <div class="form-card-icon icon-style">◈</div>
+          <div><div class="form-card-title" data-i18n="card-style-title">QR Style</div><div class="form-card-desc" data-i18n="card-style-desc">Choose the look of your QR code</div></div>
+        </div>
+        <div class="style-picker">
+          <button class="style-btn sd-classic active" data-style="classic" onclick="selectStyle(this)">
+            <div class="sdots"><i></i><i></i><i></i><i></i></div>
+            <span class="style-btn-label" data-i18n="style-classic">Classic</span>
+          </button>
+          <button class="style-btn sd-dots" data-style="dots" onclick="selectStyle(this)">
+            <div class="sdots"><i></i><i></i><i></i><i></i></div>
+            <span class="style-btn-label" data-i18n="style-dots">Dots</span>
+          </button>
+          <button class="style-btn sd-rounded" data-style="rounded" onclick="selectStyle(this)">
+            <div class="sdots"><i></i><i></i><i></i><i></i></div>
+            <span class="style-btn-label" data-i18n="style-rounded">Rounded</span>
+          </button>
+          <button class="style-btn sd-classy" data-style="classy" onclick="selectStyle(this)">
+            <div class="sdots"><i></i><i></i><i></i><i></i></div>
+            <span class="style-btn-label" data-i18n="style-classy">Classy</span>
+          </button>
+          <button class="style-btn sd-lime" data-style="lime" onclick="selectStyle(this)">
+            <div class="sdots"><i></i><i></i><i></i><i></i></div>
+            <span class="style-btn-label" data-i18n="style-lime">Lime</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Color Picker -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <div class="form-card-icon icon-color">⬡</div>
+          <div><div class="form-card-title" data-i18n="card-color-title">Colors</div><div class="form-card-desc" data-i18n="card-color-desc">QR code and background color</div></div>
+        </div>
+        <div class="color-row">
+          <div class="color-field">
+            <label data-i18n="color-qr-label">QR Color</label>
+            <div class="color-input-wrap">
+              <div class="color-swatch" id="qr-swatch" style="background:#000000">
+                <input type="color" id="qr-color" value="#000000" oninput="onColorInput('qr',this.value)">
+              </div>
+              <input class="color-hex" id="qr-hex" maxlength="7" value="#000000" oninput="onHexInput('qr',this.value)" spellcheck="false">
             </div>
-            <button class="btn-dl-qr" onclick="downloadQR()"><span data-i18n="dl-btn">⬇ Download QR PNG</span></button>
+            <div class="color-presets">
+              <div class="cp active" style="background:#000000" onclick="setColor('qr','#000000',this)"></div>
+              <div class="cp" style="background:#0d0d0d" onclick="setColor('qr','#0d0d0d',this)"></div>
+              <div class="cp" style="background:#1a1a2e" onclick="setColor('qr','#1a1a2e',this)"></div>
+              <div class="cp" style="background:#c8f53a" onclick="setColor('qr','#c8f53a',this)"></div>
+              <div class="cp" style="background:#3dd4ac" onclick="setColor('qr','#3dd4ac',this)"></div>
+              <div class="cp" style="background:#6c63ff" onclick="setColor('qr','#6c63ff',this)"></div>
+              <div class="cp" style="background:#ff6b6b" onclick="setColor('qr','#ff6b6b',this)"></div>
+              <div class="cp" style="background:#f7931e" onclick="setColor('qr','#f7931e',this)"></div>
+            </div>
+          </div>
+          <div class="color-field">
+            <label data-i18n="color-bg-label">Background</label>
+            <div class="color-input-wrap">
+              <div class="color-swatch" id="bg-swatch" style="background:#ffffff">
+                <input type="color" id="bg-color" value="#ffffff" oninput="onColorInput('bg',this.value)">
+              </div>
+              <input class="color-hex" id="bg-hex" maxlength="7" value="#ffffff" oninput="onHexInput('bg',this.value)" spellcheck="false">
+            </div>
+            <div class="color-presets">
+              <div class="cp active" style="background:#ffffff;border:1px solid #333" onclick="setColor('bg','#ffffff',this)"></div>
+              <div class="cp" style="background:#f5f2eb;border:1px solid #333" onclick="setColor('bg','#f5f2eb',this)"></div>
+              <div class="cp" style="background:#0d0d0d" onclick="setColor('bg','#0d0d0d',this)"></div>
+              <div class="cp" style="background:#1a1a2e" onclick="setColor('bg','#1a1a2e',this)"></div>
+              <div class="cp" style="background:#c8f53a" onclick="setColor('bg','#c8f53a',this)"></div>
+              <div class="cp" style="background:#3dd4ac" onclick="setColor('bg','#3dd4ac',this)"></div>
+              <div class="cp" style="background:#6c63ff" onclick="setColor('bg','#6c63ff',this)"></div>
+              <div class="cp" style="background:#f7931e" onclick="setColor('bg','#f7931e',this)"></div>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Logo Upload -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <div class="form-card-icon icon-logo">⊕</div>
+          <div><div class="form-card-title" data-i18n="card-logo-title">App Icon (optional)</div><div class="form-card-desc" data-i18n="card-logo-desc">Shown in the center of the QR code</div></div>
+        </div>
+        <div class="logo-upload-area" id="logo-drop-area">
+          <input type="file" id="logo-input" accept="image/*" onchange="handleLogoUpload(event)">
+          <span class="logo-upload-icon">🖼</span>
+          <div class="logo-upload-hint"><strong data-i18n="logo-hint-strong">Upload your app icon</strong><span data-i18n="logo-hint-sub">PNG, JPG, SVG — max 2MB</span></div>
+        </div>
+        <div class="logo-preview-row" id="logo-preview-row" style="display:none">
+          <img class="logo-thumb" id="logo-thumb" src="" alt="logo">
+          <span class="logo-preview-name" id="logo-preview-name"></span>
+          <button class="logo-clear-btn" onclick="clearLogo()" data-i18n="logo-remove">Remove</button>
+        </div>
+      </div>
     </div>
+
   </div>
 </section>
 
@@ -501,6 +527,8 @@ function onColorInput(type, val) {
     document.getElementById('bg-swatch').style.background = val;
     document.getElementById('bg-hex').value = val;
   }
+  updateAppInfoCard();
+  liveUpdate();
 }
 
 function onHexInput(type, val) {
@@ -514,6 +542,8 @@ function onHexInput(type, val) {
     document.getElementById('bg-color').value = val;
     document.getElementById('bg-swatch').style.background = val;
   }
+  updateAppInfoCard();
+  liveUpdate();
 }
 
 function setColor(type, val, el) {
@@ -531,6 +561,19 @@ function setColor(type, val, el) {
     document.getElementById('bg-swatch').style.background = val;
     document.getElementById('bg-hex').value = val;
   }
+  updateAppInfoCard();
+  liveUpdate();
+}
+
+function updateAppInfoCard() {
+  const card = document.getElementById('app-info-card');
+  const logoBox = document.getElementById('app-info-logo');
+  card.style.background = bgColor;
+  card.style.borderColor = qrColor + '33';
+  logoBox.style.background = qrColor + '22';
+  // name color: contrast against bgColor
+  const nameEl = document.getElementById('app-info-name');
+  nameEl.style.color = qrColor;
 }
 
 const T = {
@@ -563,6 +606,8 @@ const T = {
     'consent-accept':'Accept Analytics',
     'consent-decline':'Decline', 'qr-suffix':' — QR Ready ✓', 'err-url':'⚠ Enter at least one URL',
     'err-qr':'⚠ Generate a QR first!', 'ok-dl':'✓ QR downloaded!',
+    'preview-label':'Live Preview', 'preview-app-sub':'App Name',
+    'prev-no-url':'No URL yet',
     'card-color-title':'Colors', 'card-color-desc':'QR code and background color',
     'color-qr-label':'QR Color', 'color-bg-label':'Background',
     'card-style-title':'QR Style', 'card-style-desc':'Choose the look of your QR code',
@@ -599,6 +644,8 @@ const T = {
     'consent-accept':'Prihvati Analytics',
     'consent-decline':'Odbij', 'qr-suffix':' — QR Spreman ✓', 'err-url':'⚠ Unesi bar jedan URL',
     'err-qr':'⚠ Prvo generiši QR!', 'ok-dl':'✓ QR preuzet!',
+    'preview-label':'Pregled uživo', 'preview-app-sub':'Naziv aplikacije',
+    'prev-no-url':'Nema URL-a',
     'card-color-title':'Boje', 'card-color-desc':'Boja QR koda i pozadine',
     'color-qr-label':'Boja QR-a', 'color-bg-label':'Pozadina',
     'card-style-title':'Stil QR Koda', 'card-style-desc':'Izaberi izgled svog QR koda',
@@ -690,6 +737,7 @@ function selectStyle(btn) {
   document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   selectedStyle = btn.dataset.style;
+  liveUpdate();
 }
 
 function handleLogoUpload(e) {
@@ -703,6 +751,9 @@ function handleLogoUpload(e) {
     document.getElementById('logo-preview-name').textContent = file.name;
     document.getElementById('logo-preview-row').style.display = 'flex';
     document.getElementById('logo-drop-area').style.display = 'none';
+    // also update the app-info-card logo
+    document.getElementById('app-info-logo').innerHTML = `<img src="${logoDataUrl}" style="width:100%;height:100%;object-fit:contain;border-radius:6px">`;
+    liveUpdate();
   };
   reader.readAsDataURL(file);
 }
@@ -712,6 +763,8 @@ function clearLogo() {
   document.getElementById('logo-input').value = '';
   document.getElementById('logo-preview-row').style.display = 'none';
   document.getElementById('logo-drop-area').style.display = 'block';
+  document.getElementById('app-info-logo').innerHTML = '✦';
+  liveUpdate();
 }
 
 function buildQROptions(text, size) {
@@ -733,33 +786,52 @@ function buildQROptions(text, size) {
   return opts;
 }
 
-function generate() {
+let liveDebounce = null;
+
+function liveUpdate() {
+  clearTimeout(liveDebounce);
+  liveDebounce = setTimeout(_doLiveUpdate, 120);
+}
+
+function _doLiveUpdate() {
   const name    = document.getElementById('app-name').value.trim();
   const ios     = document.getElementById('ios-url').value.trim();
   const android = document.getElementById('android-url').value.trim();
-  if (!ios && !android) { showToast(tr('err-url')); return; }
-  currentAppName = name || 'My App';
 
+  // Update app info card
+  document.getElementById('app-info-name').textContent = name || '—';
+  document.getElementById('preview-appname').textContent = name ? name.toUpperCase() : '—';
+  updateAppInfoCard();
+
+  // Update store URL previews
+  const prevIos = document.getElementById('prev-ios');
+  const prevAnd = document.getElementById('prev-android');
+  if (ios) { prevIos.textContent = ios; prevIos.classList.add('has-url'); }
+  else     { prevIos.textContent = tr('prev-no-url'); prevIos.classList.remove('has-url'); }
+  if (android) { prevAnd.textContent = android; prevAnd.classList.add('has-url'); }
+  else         { prevAnd.textContent = tr('prev-no-url'); prevAnd.classList.remove('has-url'); }
+
+  if (!ios && !android) {
+    document.getElementById('dl-btn').disabled = true;
+    return;
+  }
+
+  currentAppName = name || 'My App';
   const params = new URLSearchParams();
   if (ios)     params.set('ios', ios);
   if (android) params.set('android', android);
   if (name)    params.set('n', name);
 
   const qrText = `${REDIRECT_BASE}/r.html?${params.toString()}`;
-  const qrDiv  = document.getElementById('qrcode');
+  const wrap   = document.getElementById('preview-qr-wrap');
+  const qrDiv  = document.getElementById('preview-qr');
   qrDiv.innerHTML = '';
+  wrap.style.background = bgColor;
 
-  qrInstance = new QRCodeStyling(buildQROptions(qrText, 200));
+  qrInstance = new QRCodeStyling(buildQROptions(qrText, 220));
   qrInstance.append(qrDiv);
 
-  document.getElementById('qr-app-name').textContent      = currentAppName.toUpperCase();
-  document.getElementById('result-title').textContent     = currentAppName + tr('qr-suffix');
-  document.getElementById('show-ios-url').textContent     = ios || '—';
-  document.getElementById('show-android-url').textContent = android || '—';
-
-  const rs = document.getElementById('result-section');
-  rs.style.display = 'block';
-  setTimeout(() => rs.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+  document.getElementById('dl-btn').disabled = false;
 }
 
 function downloadQR() {
@@ -772,7 +844,6 @@ function downloadQR() {
   if (android) params.set('android', android);
   if (name)    params.set('n', name);
 
-  // Build high-res version for download
   const dlQR = new QRCodeStyling(buildQROptions(`${REDIRECT_BASE}/r.html?${params.toString()}`, 600));
   dlQR.download({ name: `${currentAppName.replace(/\s+/g,'_')}_QR`, extension: 'png' });
   showToast(tr('ok-dl'));
