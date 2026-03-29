@@ -61,27 +61,37 @@ h1 em{font-style:normal;background:var(--lime);padding:0 6px;border-radius:4px}
 
 .main-tool{background:var(--ink);padding:56px 40px}
 @media(max-width:768px){.main-tool{padding:36px 20px}}
-.tool-layout{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:start}
-@media(max-width:900px){.tool-layout{grid-template-columns:1fr}}
+.tool-layout{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+@media(max-width:860px){.tool-layout{grid-template-columns:1fr}}
 .section-tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:4px;margin-bottom:14px}
 .settings-heading{font-size:26px;font-weight:900;letter-spacing:-.04em;color:white;margin-bottom:4px}
 .settings-sub{color:#666;font-size:13px;margin-bottom:20px}
 
-/* ─── LIVE PREVIEW COLUMN ─── */
-.preview-col{position:sticky;top:88px}
-@media(max-width:900px){.preview-col{position:static}}
-.preview-panel{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:14px}
+/* ─── LEFT: inputs ─── */
+.inputs-col{}
+/* compact form card — less padding */
+.form-card-compact{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:20px;margin-bottom:12px}
+.form-card-compact .form-card-header{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;gap:10px}
+.form-card-compact .field-group{margin-bottom:12px}
+.form-card-compact .field-group:last-child{margin-bottom:0}
+.form-card-compact .field-input{padding:10px 14px;font-size:13px}
+
+/* ─── RIGHT: style/color/preview ─── */
+.customize-col{position:sticky;top:88px;display:flex;flex-direction:column;gap:12px}
+@media(max-width:860px){.customize-col{position:static}}
+
+/* Live preview panel */
+.preview-panel{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:12px}
 .preview-label{font-size:10px;font-weight:800;color:#444;letter-spacing:.12em;text-transform:uppercase;font-family:'Instrument Mono',monospace;align-self:flex-start}
-.preview-qr-wrap{border-radius:14px;box-shadow:0 12px 48px rgba(0,0,0,.6);overflow:hidden;display:flex;align-items:center;justify-content:center;transition:background .3s}
+.preview-qr-wrap{border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);overflow:hidden;display:flex;align-items:center;justify-content:center;transition:background .3s}
 .preview-qr-wrap canvas{display:block}
-.preview-appname{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-family:'Cabinet Grotesk',sans-serif;color:#555;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.preview-stores{display:flex;flex-direction:column;gap:5px;width:100%}
-.preview-store-row{display:flex;align-items:center;gap:7px;background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:7px 10px}
-.preview-store-icon{font-size:13px;flex-shrink:0}
+.preview-appname{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-family:'Cabinet Grotesk',sans-serif;color:#555;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.preview-stores{display:flex;flex-direction:column;gap:4px;width:100%}
+.preview-store-row{display:flex;align-items:center;gap:7px;background:#111;border:1px solid #1e1e1e;border-radius:7px;padding:6px 10px}
+.preview-store-icon{font-size:12px;flex-shrink:0}
 .preview-store-url{font-size:10px;color:#444;font-family:'Instrument Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .preview-store-url.has-url{color:#888}
-.preview-empty-hint{font-size:11px;color:#444;text-align:center;line-height:1.6;padding:4px 0}
-.btn-dl-preview{width:100%;background:var(--lime);color:var(--ink);border:none;border-radius:10px;padding:13px;font-size:13px;font-weight:900;font-family:'Cabinet Grotesk',sans-serif;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;letter-spacing:-.01em}
+.btn-dl-preview{width:100%;background:var(--lime);color:var(--ink);border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:900;font-family:'Cabinet Grotesk',sans-serif;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;letter-spacing:-.01em}
 .btn-dl-preview:hover{background:var(--lime-dark);transform:translateY(-1px)}
 .btn-dl-preview:disabled{background:#1e1e1e;color:#444;cursor:not-allowed;transform:none}
 
@@ -286,53 +296,13 @@ footer strong{color:var(--ink)}
 <section class="main-tool" id="generator">
   <div class="tool-layout">
 
-    <!-- LEFT: Live Preview -->
-    <div class="preview-col">
-      <div class="preview-panel">
-        <div class="preview-label" data-i18n="preview-label">Live Preview</div>
-
-        <!-- App Info card styled with QR colors -->
-        <div id="app-info-card" style="width:100%;border-radius:12px;padding:12px 14px;background:#111;border:1px solid #2a2a2a;transition:background .3s,border-color .3s">
-          <div style="display:flex;align-items:center;gap:10px">
-            <div id="app-info-logo" style="width:36px;height:36px;border-radius:8px;background:#222;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;transition:background .3s">✦</div>
-            <div>
-              <div id="app-info-name" style="font-size:14px;font-weight:800;color:white;letter-spacing:-.02em">—</div>
-              <div style="font-size:10px;color:#555;font-family:'Instrument Mono',monospace;margin-top:1px" data-i18n="preview-app-sub">App Name</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="preview-qr-wrap" id="preview-qr-wrap" style="background:#ffffff">
-          <div id="preview-qr"></div>
-        </div>
-        <div class="preview-appname" id="preview-appname">—</div>
-
-        <div class="preview-stores">
-          <div class="preview-store-row">
-            <span class="preview-store-icon">🍎</span>
-            <span class="preview-store-url" id="prev-ios" data-i18n="prev-no-url">No iOS URL yet</span>
-          </div>
-          <div class="preview-store-row">
-            <span class="preview-store-icon">🤖</span>
-            <span class="preview-store-url" id="prev-android" data-i18n="prev-no-url">No Android URL yet</span>
-          </div>
-        </div>
-
-        <button class="btn-dl-preview" id="dl-btn" onclick="downloadQR()" disabled>
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span data-i18n="dl-btn">⬇ Download QR PNG</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- RIGHT: Settings -->
-    <div class="settings-col">
+    <!-- LEFT: App info + URLs + logo -->
+    <div class="inputs-col">
       <div class="section-tag">Generator</div>
       <div class="settings-heading" data-i18n="gen-title">Generate Your QR Code</div>
       <div class="settings-sub" data-i18n="gen-sub">Enter your app store URLs — your users get a QR that just works.</div>
 
-      <!-- App Info -->
-      <div class="form-card">
+      <div class="form-card-compact">
         <div class="form-card-header">
           <div class="form-card-icon icon-app">✦</div>
           <div><div class="form-card-title" data-i18n="card1-title">App Info</div><div class="form-card-desc" data-i18n="card1-desc">Basic information about your app</div></div>
@@ -342,17 +312,39 @@ footer strong{color:var(--ink)}
           <input type="text" class="field-input" id="app-name" data-i18n-ph="ph-name" placeholder="e.g. My Awesome App" oninput="liveUpdate()">
         </div>
         <div class="field-group">
-          <label>App Store URL</label>
+          <label><span style="font-size:13px;margin-right:4px">🍎</span> App Store URL</label>
           <input type="url" class="field-input" id="ios-url" placeholder="https://apps.apple.com/app/id123456789" oninput="liveUpdate()">
         </div>
         <div class="field-group" style="margin:0">
-          <label>Play Store URL</label>
+          <label><span style="font-size:13px;margin-right:4px">🤖</span> Play Store URL</label>
           <input type="url" class="field-input" id="android-url" placeholder="https://play.google.com/store/apps/details?id=com.your.app" oninput="liveUpdate()">
         </div>
       </div>
 
+      <!-- Logo Upload -->
+      <div class="form-card-compact">
+        <div class="form-card-header">
+          <div class="form-card-icon icon-logo">⊕</div>
+          <div><div class="form-card-title" data-i18n="card-logo-title">App Icon (optional)</div><div class="form-card-desc" data-i18n="card-logo-desc">Shown in the center of the QR code</div></div>
+        </div>
+        <div class="logo-upload-area" id="logo-drop-area">
+          <input type="file" id="logo-input" accept="image/*" onchange="handleLogoUpload(event)">
+          <span class="logo-upload-icon">🖼</span>
+          <div class="logo-upload-hint"><strong data-i18n="logo-hint-strong">Upload your app icon</strong><span data-i18n="logo-hint-sub">PNG, JPG, SVG — max 2MB</span></div>
+        </div>
+        <div class="logo-preview-row" id="logo-preview-row" style="display:none">
+          <img class="logo-thumb" id="logo-thumb" src="" alt="logo">
+          <span class="logo-preview-name" id="logo-preview-name"></span>
+          <button class="logo-clear-btn" onclick="clearLogo()" data-i18n="logo-remove">Remove</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Style + Colors + Live Preview -->
+    <div class="customize-col">
+
       <!-- QR Style Picker -->
-      <div class="form-card">
+      <div class="form-card-compact">
         <div class="form-card-header">
           <div class="form-card-icon icon-style">◈</div>
           <div><div class="form-card-title" data-i18n="card-style-title">QR Style</div><div class="form-card-desc" data-i18n="card-style-desc">Choose the look of your QR code</div></div>
@@ -382,7 +374,7 @@ footer strong{color:var(--ink)}
       </div>
 
       <!-- Color Picker -->
-      <div class="form-card">
+      <div class="form-card-compact">
         <div class="form-card-header">
           <div class="form-card-icon icon-color">⬡</div>
           <div><div class="form-card-title" data-i18n="card-color-title">Colors</div><div class="form-card-desc" data-i18n="card-color-desc">QR code and background color</div></div>
@@ -398,9 +390,9 @@ footer strong{color:var(--ink)}
             </div>
             <div class="color-presets">
               <div class="cp active" style="background:#000000" onclick="setColor('qr','#000000',this)"></div>
-              <div class="cp" style="background:#0d0d0d" onclick="setColor('qr','#0d0d0d',this)"></div>
               <div class="cp" style="background:#1a1a2e" onclick="setColor('qr','#1a1a2e',this)"></div>
               <div class="cp" style="background:#c8f53a" onclick="setColor('qr','#c8f53a',this)"></div>
+              <div class="cp" style="background:#ffe234" onclick="setColor('qr','#ffe234',this)"></div>
               <div class="cp" style="background:#3dd4ac" onclick="setColor('qr','#3dd4ac',this)"></div>
               <div class="cp" style="background:#6c63ff" onclick="setColor('qr','#6c63ff',this)"></div>
               <div class="cp" style="background:#ff6b6b" onclick="setColor('qr','#ff6b6b',this)"></div>
@@ -417,10 +409,10 @@ footer strong{color:var(--ink)}
             </div>
             <div class="color-presets">
               <div class="cp active" style="background:#ffffff;border:1px solid #333" onclick="setColor('bg','#ffffff',this)"></div>
-              <div class="cp" style="background:#f5f2eb;border:1px solid #333" onclick="setColor('bg','#f5f2eb',this)"></div>
+              <div class="cp" style="background:#f5f2eb;border:1px solid #444" onclick="setColor('bg','#f5f2eb',this)"></div>
               <div class="cp" style="background:#0d0d0d" onclick="setColor('bg','#0d0d0d',this)"></div>
               <div class="cp" style="background:#1a1a2e" onclick="setColor('bg','#1a1a2e',this)"></div>
-              <div class="cp" style="background:#c8f53a" onclick="setColor('bg','#c8f53a',this)"></div>
+              <div class="cp" style="background:#ffe234" onclick="setColor('bg','#ffe234',this)"></div>
               <div class="cp" style="background:#3dd4ac" onclick="setColor('bg','#3dd4ac',this)"></div>
               <div class="cp" style="background:#6c63ff" onclick="setColor('bg','#6c63ff',this)"></div>
               <div class="cp" style="background:#f7931e" onclick="setColor('bg','#f7931e',this)"></div>
@@ -429,25 +421,43 @@ footer strong{color:var(--ink)}
         </div>
       </div>
 
-      <!-- Logo Upload -->
-      <div class="form-card">
-        <div class="form-card-header">
-          <div class="form-card-icon icon-logo">⊕</div>
-          <div><div class="form-card-title" data-i18n="card-logo-title">App Icon (optional)</div><div class="form-card-desc" data-i18n="card-logo-desc">Shown in the center of the QR code</div></div>
-        </div>
-        <div class="logo-upload-area" id="logo-drop-area">
-          <input type="file" id="logo-input" accept="image/*" onchange="handleLogoUpload(event)">
-          <span class="logo-upload-icon">🖼</span>
-          <div class="logo-upload-hint"><strong data-i18n="logo-hint-strong">Upload your app icon</strong><span data-i18n="logo-hint-sub">PNG, JPG, SVG — max 2MB</span></div>
-        </div>
-        <div class="logo-preview-row" id="logo-preview-row" style="display:none">
-          <img class="logo-thumb" id="logo-thumb" src="" alt="logo">
-          <span class="logo-preview-name" id="logo-preview-name"></span>
-          <button class="logo-clear-btn" onclick="clearLogo()" data-i18n="logo-remove">Remove</button>
-        </div>
-      </div>
-    </div>
+      <!-- Live Preview -->
+      <div class="preview-panel">
+        <div class="preview-label" data-i18n="preview-label">Live Preview</div>
 
+        <div id="app-info-card" style="width:100%;border-radius:10px;padding:10px 12px;background:#111;border:1px solid #2a2a2a;transition:background .3s,border-color .3s">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div id="app-info-logo" style="width:32px;height:32px;border-radius:7px;background:#222;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:16px;transition:background .3s">✦</div>
+            <div>
+              <div id="app-info-name" style="font-size:13px;font-weight:800;color:white;letter-spacing:-.02em">—</div>
+              <div style="font-size:9px;color:#555;font-family:'Instrument Mono',monospace;margin-top:1px" data-i18n="preview-app-sub">App Name</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-qr-wrap" id="preview-qr-wrap" style="background:#ffffff">
+          <div id="preview-qr"></div>
+        </div>
+        <div class="preview-appname" id="preview-appname">—</div>
+
+        <div class="preview-stores">
+          <div class="preview-store-row">
+            <span class="preview-store-icon">🍎</span>
+            <span class="preview-store-url" id="prev-ios" data-i18n="prev-no-url">No URL yet</span>
+          </div>
+          <div class="preview-store-row">
+            <span class="preview-store-icon">🤖</span>
+            <span class="preview-store-url" id="prev-android" data-i18n="prev-no-url">No URL yet</span>
+          </div>
+        </div>
+
+        <button class="btn-dl-preview" id="dl-btn" onclick="downloadQR()" disabled>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span data-i18n="dl-btn">⬇ Download QR PNG</span>
+        </button>
+      </div>
+
+    </div>
   </div>
 </section>
 
