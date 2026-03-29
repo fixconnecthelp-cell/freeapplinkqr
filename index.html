@@ -123,6 +123,21 @@ label{display:block;font-size:12px;font-weight:700;color:#777;letter-spacing:.06
 .sd-lime .sdots i{border-radius:50%}
 .sd-lime .sdots i:nth-child(1),.sd-lime .sdots i:nth-child(4){border-radius:3px;background:#a8d020!important}
 
+/* ─── COLOR PICKER ─── */
+.icon-color{background:rgba(255,100,100,.12)}
+.color-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:420px){.color-row{grid-template-columns:1fr}}
+.color-field label{margin-bottom:10px}
+.color-input-wrap{display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:10px;padding:8px 12px;cursor:pointer;transition:border-color .2s}
+.color-input-wrap:focus-within{border-color:var(--lime)}
+.color-swatch{width:28px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,.12);flex-shrink:0;cursor:pointer;position:relative;overflow:hidden}
+.color-swatch input[type=color]{position:absolute;inset:-4px;width:calc(100%+8px);height:calc(100%+8px);opacity:0;cursor:pointer;border:none;padding:0}
+.color-hex{font-family:'Instrument Mono',monospace;font-size:13px;color:white;flex:1;background:none;border:none;outline:none;min-width:0}
+.color-presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.cp{width:22px;height:22px;border-radius:5px;border:2px solid transparent;cursor:pointer;transition:transform .15s,border-color .15s;flex-shrink:0}
+.cp:hover{transform:scale(1.15)}
+.cp.active{border-color:var(--lime)}
+
 /* ─── LOGO UPLOAD ─── */
 .logo-upload-area{border:2px dashed #2a2a2a;border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden}
 .logo-upload-area:hover{border-color:#555}
@@ -317,6 +332,54 @@ footer strong{color:var(--ink)}
       </div>
     </div>
 
+    <!-- Color Picker -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <div class="form-card-icon icon-color">⬡</div>
+        <div><div class="form-card-title" data-i18n="card-color-title">Colors</div><div class="form-card-desc" data-i18n="card-color-desc">QR code and background color</div></div>
+      </div>
+      <div class="color-row">
+        <div class="color-field">
+          <label data-i18n="color-qr-label">QR Color</label>
+          <div class="color-input-wrap">
+            <div class="color-swatch" id="qr-swatch" style="background:#000000">
+              <input type="color" id="qr-color" value="#000000" oninput="onColorInput('qr',this.value)">
+            </div>
+            <input class="color-hex" id="qr-hex" maxlength="7" value="#000000" oninput="onHexInput('qr',this.value)" spellcheck="false">
+          </div>
+          <div class="color-presets">
+            <div class="cp active" style="background:#000000" onclick="setColor('qr','#000000',this)"></div>
+            <div class="cp" style="background:#0d0d0d" onclick="setColor('qr','#0d0d0d',this)"></div>
+            <div class="cp" style="background:#1a1a2e" onclick="setColor('qr','#1a1a2e',this)"></div>
+            <div class="cp" style="background:#c8f53a" onclick="setColor('qr','#c8f53a',this)"></div>
+            <div class="cp" style="background:#3dd4ac" onclick="setColor('qr','#3dd4ac',this)"></div>
+            <div class="cp" style="background:#6c63ff" onclick="setColor('qr','#6c63ff',this)"></div>
+            <div class="cp" style="background:#ff6b6b" onclick="setColor('qr','#ff6b6b',this)"></div>
+            <div class="cp" style="background:#f7931e" onclick="setColor('qr','#f7931e',this)"></div>
+          </div>
+        </div>
+        <div class="color-field">
+          <label data-i18n="color-bg-label">Background</label>
+          <div class="color-input-wrap">
+            <div class="color-swatch" id="bg-swatch" style="background:#ffffff">
+              <input type="color" id="bg-color" value="#ffffff" oninput="onColorInput('bg',this.value)">
+            </div>
+            <input class="color-hex" id="bg-hex" maxlength="7" value="#ffffff" oninput="onHexInput('bg',this.value)" spellcheck="false">
+          </div>
+          <div class="color-presets">
+            <div class="cp active" style="background:#ffffff;border:1px solid #333" onclick="setColor('bg','#ffffff',this)"></div>
+            <div class="cp" style="background:#f5f2eb;border:1px solid #333" onclick="setColor('bg','#f5f2eb',this)"></div>
+            <div class="cp" style="background:#0d0d0d" onclick="setColor('bg','#0d0d0d',this)"></div>
+            <div class="cp" style="background:#1a1a2e" onclick="setColor('bg','#1a1a2e',this)"></div>
+            <div class="cp" style="background:#c8f53a" onclick="setColor('bg','#c8f53a',this)"></div>
+            <div class="cp" style="background:#3dd4ac" onclick="setColor('bg','#3dd4ac',this)"></div>
+            <div class="cp" style="background:#6c63ff" onclick="setColor('bg','#6c63ff',this)"></div>
+            <div class="cp" style="background:#f7931e" onclick="setColor('bg','#f7931e',this)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Logo Upload -->
     <div class="form-card">
       <div class="form-card-header">
@@ -425,6 +488,50 @@ let lang = 'en';
 let selectedStyle = 'classic';
 let logoDataUrl = null;
 let qrInstance = null;
+let qrColor = '#000000';
+let bgColor = '#ffffff';
+
+function onColorInput(type, val) {
+  if (type === 'qr') {
+    qrColor = val;
+    document.getElementById('qr-swatch').style.background = val;
+    document.getElementById('qr-hex').value = val;
+  } else {
+    bgColor = val;
+    document.getElementById('bg-swatch').style.background = val;
+    document.getElementById('bg-hex').value = val;
+  }
+}
+
+function onHexInput(type, val) {
+  if (!/^#[0-9a-fA-F]{6}$/.test(val)) return;
+  if (type === 'qr') {
+    qrColor = val;
+    document.getElementById('qr-color').value = val;
+    document.getElementById('qr-swatch').style.background = val;
+  } else {
+    bgColor = val;
+    document.getElementById('bg-color').value = val;
+    document.getElementById('bg-swatch').style.background = val;
+  }
+}
+
+function setColor(type, val, el) {
+  const presetGroup = el.closest('.color-field').querySelectorAll('.cp');
+  presetGroup.forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  if (type === 'qr') {
+    qrColor = val;
+    document.getElementById('qr-color').value = val;
+    document.getElementById('qr-swatch').style.background = val;
+    document.getElementById('qr-hex').value = val;
+  } else {
+    bgColor = val;
+    document.getElementById('bg-color').value = val;
+    document.getElementById('bg-swatch').style.background = val;
+    document.getElementById('bg-hex').value = val;
+  }
+}
 
 const T = {
   en: {
@@ -456,6 +563,8 @@ const T = {
     'consent-accept':'Accept Analytics',
     'consent-decline':'Decline', 'qr-suffix':' — QR Ready ✓', 'err-url':'⚠ Enter at least one URL',
     'err-qr':'⚠ Generate a QR first!', 'ok-dl':'✓ QR downloaded!',
+    'card-color-title':'Colors', 'card-color-desc':'QR code and background color',
+    'color-qr-label':'QR Color', 'color-bg-label':'Background',
     'card-style-title':'QR Style', 'card-style-desc':'Choose the look of your QR code',
     'style-classic':'Classic', 'style-dots':'Dots', 'style-rounded':'Rounded', 'style-classy':'Classy', 'style-lime':'Lime',
     'card-logo-title':'App Icon (optional)', 'card-logo-desc':'Shown in the center of the QR code',
@@ -490,6 +599,8 @@ const T = {
     'consent-accept':'Prihvati Analytics',
     'consent-decline':'Odbij', 'qr-suffix':' — QR Spreman ✓', 'err-url':'⚠ Unesi bar jedan URL',
     'err-qr':'⚠ Prvo generiši QR!', 'ok-dl':'✓ QR preuzet!',
+    'card-color-title':'Boje', 'card-color-desc':'Boja QR koda i pozadine',
+    'color-qr-label':'Boja QR-a', 'color-bg-label':'Pozadina',
     'card-style-title':'Stil QR Koda', 'card-style-desc':'Izaberi izgled svog QR koda',
     'style-classic':'Klasičan', 'style-dots':'Tačke', 'style-rounded':'Zaobljeni', 'style-classy':'Elegantni', 'style-lime':'Lime',
     'card-logo-title':'Ikonica aplikacije (opciono)', 'card-logo-desc':'Prikazuje se u centru QR koda',
@@ -549,34 +660,29 @@ window.addEventListener('load', () => {
 // ─── STYLE CONFIG MAP ────────────────────────────────
 const STYLE_MAP = {
   classic: {
-    dotsOptions:    { type: 'square',       color: '#000000' },
-    cornersSquareOptions: { type: 'square', color: '#000000' },
-    cornersDotOptions:    { type: 'square', color: '#000000' },
-    backgroundOptions:    { color: '#ffffff' },
+    dotsOptions:          { type: 'square' },
+    cornersSquareOptions: { type: 'square' },
+    cornersDotOptions:    { type: 'square' },
   },
   dots: {
-    dotsOptions:    { type: 'dots',         color: '#000000' },
-    cornersSquareOptions: { type: 'dot',    color: '#000000' },
-    cornersDotOptions:    { type: 'dot',    color: '#000000' },
-    backgroundOptions:    { color: '#ffffff' },
+    dotsOptions:          { type: 'dots' },
+    cornersSquareOptions: { type: 'dot' },
+    cornersDotOptions:    { type: 'dot' },
   },
   rounded: {
-    dotsOptions:    { type: 'rounded',      color: '#000000' },
-    cornersSquareOptions: { type: 'extra-rounded', color: '#000000' },
-    cornersDotOptions:    { type: 'dot',    color: '#000000' },
-    backgroundOptions:    { color: '#ffffff' },
+    dotsOptions:          { type: 'rounded' },
+    cornersSquareOptions: { type: 'extra-rounded' },
+    cornersDotOptions:    { type: 'dot' },
   },
   classy: {
-    dotsOptions:    { type: 'classy',       color: '#0d0d0d' },
-    cornersSquareOptions: { type: 'extra-rounded', color: '#0d0d0d' },
-    cornersDotOptions:    { type: 'dot',    color: '#0d0d0d' },
-    backgroundOptions:    { color: '#ffffff' },
+    dotsOptions:          { type: 'classy' },
+    cornersSquareOptions: { type: 'extra-rounded' },
+    cornersDotOptions:    { type: 'dot' },
   },
   lime: {
-    dotsOptions:    { type: 'dots',         color: '#0d0d0d' },
-    cornersSquareOptions: { type: 'extra-rounded', color: '#0d0d0d' },
-    cornersDotOptions:    { type: 'dot',    color: '#c8f53a' },
-    backgroundOptions:    { color: '#0d0d0d' },
+    dotsOptions:          { type: 'dots' },
+    cornersSquareOptions: { type: 'extra-rounded' },
+    cornersDotOptions:    { type: 'dot' },
   },
 };
 
@@ -615,10 +721,10 @@ function buildQROptions(text, size) {
     type: 'canvas',
     data: text,
     qrOptions: { errorCorrectionLevel: logoDataUrl ? 'H' : 'M' },
-    dotsOptions:          { ...s.dotsOptions },
-    cornersSquareOptions: { ...s.cornersSquareOptions },
-    cornersDotOptions:    { ...s.cornersDotOptions },
-    backgroundOptions:    { ...s.backgroundOptions },
+    dotsOptions:          { ...s.dotsOptions,          color: qrColor },
+    cornersSquareOptions: { ...s.cornersSquareOptions, color: qrColor },
+    cornersDotOptions:    { ...s.cornersDotOptions,    color: qrColor },
+    backgroundOptions:    { color: bgColor },
   };
   if (logoDataUrl) {
     opts.image = logoDataUrl;
