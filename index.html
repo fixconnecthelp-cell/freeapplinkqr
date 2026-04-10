@@ -16,8 +16,8 @@
 <style>
 :root{--ink:#0d0d0d;--paper:#f5f2eb;--lime:#c8f53a;--lime-dark:#a8d020;--muted:#6b6960;--border:#d5d0c5;--white:#ffffff}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;overflow-x:hidden}
-body{background:var(--paper);color:var(--ink);font-family:'Cabinet Grotesk',sans-serif;overflow-x:hidden;width:100%}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Cabinet Grotesk',sans-serif}
 
 nav{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--border);background:var(--paper);position:sticky;top:0;z-index:100}
 .nav-logo{font-size:20px;font-weight:900;letter-spacing:-.04em;display:flex;align-items:center;gap:8px}
@@ -61,15 +61,15 @@ h1 em{font-style:normal;background:var(--lime);padding:0 6px;border-radius:4px}
 
 .main-tool{background:var(--ink);padding:56px 40px}
 @media(max-width:768px){.main-tool{padding:36px 20px}}
-.tool-layout{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 280px;gap:20px;align-items:start}
+.tool-layout{max-width:1200px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr 280px;gap:20px;align-items:start}
 @media(max-width:1100px){.tool-layout{grid-template-columns:1fr 1fr}}
-@media(max-width:768px){.tool-layout{grid-template-columns:1fr}}
+@media(max-width:768px){.tool-layout{grid-template-columns:1fr;gap:12px}}
 .section-tag{display:inline-block;background:var(--lime);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:4px;margin-bottom:14px}
 .settings-heading{font-size:22px;font-weight:900;letter-spacing:-.04em;color:white;margin-bottom:4px}
 .settings-sub{color:#666;font-size:13px;margin-bottom:18px}
 
 /* ─── COL 1: inputs ─── */
-.inputs-col{}
+.inputs-col{min-width:0}
 /* compact form card */
 .form-card-compact{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;padding:18px;margin-bottom:12px}
 .form-card-compact .form-card-header{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;gap:10px}
@@ -78,10 +78,10 @@ h1 em{font-style:normal;background:var(--lime);padding:0 6px;border-radius:4px}
 .form-card-compact .field-input{padding:10px 13px;font-size:13px}
 
 /* ─── COL 2: style + colors ─── */
-.customize-col{display:flex;flex-direction:column;gap:12px}
+.customize-col{display:flex;flex-direction:column;gap:12px;min-width:0}
 
 /* ─── COL 3: preview (sticky) ─── */
-.preview-sticky{position:sticky;top:88px}
+.preview-sticky{position:sticky;top:88px;min-width:0}
 @media(max-width:1024px){.preview-sticky{position:static}}
 
 /* Live preview panel */
@@ -160,7 +160,8 @@ label{display:block;font-size:12px;font-weight:700;color:#777;letter-spacing:.06
 /* ─── COLOR PICKER ─── */
 .icon-color{background:rgba(255,100,100,.12)}
 .color-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:420px){.color-row{grid-template-columns:1fr}}
+.color-field{min-width:0}
+@media(max-width:768px){.color-row{grid-template-columns:1fr}}
 .color-field label{margin-bottom:10px}
 .color-input-wrap{display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:10px;padding:8px 12px;cursor:pointer;transition:border-color .2s}
 .color-input-wrap:focus-within{border-color:var(--lime)}
